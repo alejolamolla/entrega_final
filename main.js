@@ -17,21 +17,21 @@ function activate(e) {
 
             if (++currentMove == 2) {
 
-            currentAttempts++;
-            document.querySelector('#stats').innerHTML = currentAttempts + ' intentos';
+                currentAttempts++;
+                document.querySelector('#stats').innerHTML = currentAttempts + ' intentos';
 
-            if (selectedCards[0].querySelectorAll('.face')[0].innerHTML == selectedCards[1].querySelectorAll('.face')[0].innerHTML) {
-                selectedCards = [];
-                currentMove = 0;
-            }
-            else {
-                setTimeout(() => {
-                    selectedCards[0].classList.remove('active');
-                    selectedCards[1].classList.remove('active');
+                if (selectedCards[0].querySelectorAll('.face')[0].innerHTML == selectedCards[1].querySelectorAll('.face')[0].innerHTML) {
                     selectedCards = [];
                     currentMove = 0;
-                }, 600);
-            }
+                }
+                else {
+                    setTimeout(() => {
+                        selectedCards[0].classList.remove('active');
+                        selectedCards[1].classList.remove('active');
+                        selectedCards = [];
+                        currentMove = 0;
+                    }, 600);
+                }
             }
         }
     }
@@ -56,7 +56,7 @@ function getFaceValue(value) {
     return rtn;
 }
 
-for (let i=0; i < totalCards; i++) {
+for (let i = 0; i < totalCards; i++) {
     let div = document.createElement('div');
     div.innerHTML = cardTemplate;
     cards.push(div);
@@ -73,9 +73,11 @@ function reiniciarJuego () {
     currentAttempts = 0;
     document.querySelector('#stats').innerHTML = currentAttempts + ' intentos';
     document.querySelector('#game').innerHTML = '';
-    cards = []; for (let i = 0; i < totalCards; i++) { 
+    cards = []; 
+    for (let i = 0; i < totalCards; i++) { 
         let div = document.createElement('div'); 
-        div.innerHTML = cardTemplate; cards.push(div); 
+        div.innerHTML = cardTemplate; 
+        cards.push(div); 
         document.querySelector('#game').append(cards[i]); 
         randomValue(); 
         cards[i].querySelectorAll('.face')[0].innerHTML = getFaceValue(valuesUsed[i]); 
@@ -84,3 +86,21 @@ function reiniciarJuego () {
 }
 
 document.getElementById('botonReiniciar').addEventListener('click', reiniciarJuego);
+
+fetch('https://api.example.com/cards')
+    .then(response => response.json())
+    .then(data => {
+
+        console.log(data); 
+
+        for (let i = 0; i < data.length; i++) {
+            if (i < totalCards) {
+                let div = document.createElement('div');
+                div.innerHTML = cardTemplate;
+                cards.push(div);
+                document.querySelector('#game').append(cards[i]);
+                cards[i].querySelectorAll('.card')[0].addEventListener('click', activate);
+            }
+        }
+    })
+    .catch(error => console.error('Error fetching data:', error));
